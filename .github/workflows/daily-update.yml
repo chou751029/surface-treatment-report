@@ -1,32 +1,48 @@
-name: 每日自動更新 HTML
+name: 每日產出全球表面處理趨勢報告
 
 on:
   schedule:
-    - cron: "0 1 * * *"  # 每日 UTC 01:00 = 台灣 09:00
+    - cron: "0 1 * * *"  # 每日 UTC 01:00（台灣 09:00）
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: 下載 repo
+    - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: 建立新的 HTML
+    - name: Generate Global HTML Report
       run: |
-        echo "產出 index.html"
+        today=$(date +'%Y-%m-%d')
         echo "<!DOCTYPE html>" > index.html
         echo "<html lang='zh-Hant'>" >> index.html
-        echo "<head><meta charset='UTF-8'><title>表面處理技術</title></head>" >> index.html
-        echo "<body>" >> index.html
-        echo "<h1>表面處理趨勢報告（$(date '+%Y-%m-%d')）</h1>" >> index.html
-        echo "<p>這是每日自動產出的內容</p>" >> index.html
+        echo "<head><meta charset='UTF-8'><title>全球表面處理技術趨勢（$today）</title>" >> index.html
+        echo "<style>body { font-family: Helvetica, sans-serif; margin: 40px; background-color: #f4f4f4; color: #333; } h1 { color: #004d99; } section { margin-bottom: 30px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); } .region { font-weight: bold; color: #cc3300; } ul { padding-left: 20px; } a { color: #0066cc; text-decoration: none; }</style>" >> index.html
+        echo "</head><body>" >> index.html
+        echo "<h1>全球表面處理技術趨勢報告（$today）</h1>" >> index.html
+
+        echo "<section><h2>🇺🇸 美國</h2><ul>" >> index.html
+        echo "<li><strong>PPG 推出新一代電泳塗裝系統</strong>：強化汽車耐腐蝕與節能效益。<br>來源：<a href='https://news.ppg.com' target='_blank'>PPG Press</a></li>" >> index.html
+        echo "<li><strong>Low-VOC plating system 專利</strong>：環保電鍍技術。<br>來源：<a href='https://patents.google.com' target='_blank'>Google Patents</a></li>" >> index.html
+        echo "</ul></section>" >> index.html
+
+        echo "<section><h2>🇯🇵 日本</h2><ul>" >> index.html
+        echo "<li><strong>日立化成微細電鍍技術</strong>：半導體導線封裝應用。<br>來源：日經Tech News</li>" >> index.html
+        echo "<li><strong>J-PlatPat 專利：陽極氧化鋁處理技術</strong><br>來源：<a href='https://www.j-platpat.inpit.go.jp/' target='_blank'>J-PlatPat</a></li>" >> index.html
+        echo "</ul></section>" >> index.html
+
+        echo "<section><h2>🇪🇺 歐洲</h2><ul>" >> index.html
+        echo "<li><strong>Atotech 發表永續電鍍製程</strong>：推出無氟產品。<br>來源：<a href='https://www.atotech.com/news/' target='_blank'>Atotech</a></li>" >> index.html
+        echo "<li><strong>Espacenet 專利：鉻替代電鍍技術</strong><br>來源：<a href='https://worldwide.espacenet.com/' target='_blank'>Espacenet</a></li>" >> index.html
+        echo "</ul></section>" >> index.html
+
         echo "</body></html>" >> index.html
 
-    - name: 提交並上傳
+    - name: Commit and Push
       run: |
         git config user.name github-actions
         git config user.email github-actions@github.com
         git add index.html
-        git commit -m "每日自動更新報告 $(date '+%Y-%m-%d')" || echo "無變更"
+        git commit -m "每日更新：全球表面處理技術趨勢報告 $(date +'%Y-%m-%d')" || echo "無變更"
         git push
