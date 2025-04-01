@@ -42,8 +42,9 @@ jobs:
       run: |
         git config user.name github-actions
         git config user.email github-actions@github.com
-        git pull origin main --rebase || true  # 先同步最新版本
+        git pull origin main --rebase || echo "忽略 rebase 錯誤"
         git add index.html
-        git commit -m "每日更新：全球表面處理技術趨勢報告 $(date +'%Y-%m-%d')" || echo "無需 commit"
-        git push || echo "Push 失敗，但已完成其他步驟"
+        git diff --cached --quiet || git commit -m "每日更新：全球表面處理技術趨勢報告 $(date +'%Y-%m-%d')" || echo "無需 commit"
+        git push || echo "push 失敗，但不終止流程"
+
 
